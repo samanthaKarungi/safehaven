@@ -11,10 +11,12 @@ interface Contact {
 
 const EmergencyContacts = () => {
   const { toast } = useToast();
+
   const [contacts, setContacts] = useState<Contact[]>(() => {
     const saved = localStorage.getItem("emergencyContacts");
     return saved ? JSON.parse(saved) : [];
   });
+
   const [newContact, setNewContact] = useState({
     name: "",
     phone: "",
@@ -49,17 +51,27 @@ const EmergencyContacts = () => {
     toast("Emergency contact removed successfully", "success");
   };
 
-  const handleSOS = () => {
+  const handleSOS = async () => {
     if (contacts.length === 0) {
       toast("Failed to send emergency alert", "error");
       return;
     }
 
-    // In a real application, this would integrate with a service to send
-    // emergency alerts to all contacts. For now, we'll simulate it:
-    contacts.forEach((contact) => {
-      toast("Emergency alert sent to " + contact.name, "success");
+    const response = await fetch("/api/trigger-sms", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ contacts }),
     });
+
+    if (!response.ok) {
+      toast("Failed to send SMS", "error");
+    } else {
+      contacts.forEach((contact) => {
+        toast("Emergency alert sent to " + contact.name, "success");
+      });
+    }
   };
 
   return (

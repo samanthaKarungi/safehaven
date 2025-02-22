@@ -1,13 +1,52 @@
 "use client"
-import { Heart, Shield, Book, Phone } from "lucide-react";
+import { Heart, Shield, Book, MessageCircle, Bell, MessageSquare, Calendar } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Home() {
+  const { toast } = useToast();
+
+  const handleVoiceCall = async () => {
+    try {
+      const contacts = JSON.parse(localStorage.getItem("emergencyContacts") || "[]");
+      
+      if (contacts.length === 0) {
+        toast("Please add emergency contacts first", "error");
+        return;
+      }
+
+      const response = await fetch("/api/trigger-voice-call", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        toast("Failed to call contact", "error");
+      }
+
+      toast("Emergency voice calls initiated. Hang in there!", "success");
+    } catch (error) {
+      console.error("Voice call error:", error);
+      toast("Failed to make emergency calls", "error");
+    }
+  };
+
+  const handleSendSMS = async () => {
+    try {
+      // Add SMS sending logic here
+    } catch (error) {
+      console.error("SMS sending error:", error);
+      toast("Failed to send SMS", "error");
+    }
+  };
+
   return (
     <div className="space-y-20">
       {/* Hero Section */}
       <section className="text-center py-20 hero-slide">
         <h1 className="text-4xl md:text-6xl font-bold text-primary mb-6">
-          Your Safe Space for Support and Healing
+          A Woman&apos;s Safe Space for Support
         </h1>
         <p className="text-lg md:text-xl text-gray-600 max-w-2xl mx-auto mb-8">
           A confidential platform providing support, resources, and connection to essential services for survivors of gender-based violence.
@@ -66,30 +105,36 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8 mb-4">
           <div className="card">
             <div className="flex items-start space-x-4">
-              <Phone className="h-8 w-8 text-primary flex-shrink-0" />
+              <Bell className="h-8 w-8 text-primary flex-shrink-0" />
               <div>
-                <h3 className="text-xl font-semibold mb-2">24/7 Helpline</h3>
+                <h3 className="text-xl font-semibold mb-2">Voice alert emergency contacts</h3>
                 <p className="text-gray-600 mb-4">
-                  Trained professionals are available 24/7 to provide confidential support.
+                  Send voice alert to emergency contacts
                 </p>
-                <a href="tel:1800RESPECT" className="button-primary inline-block">
+                <button 
+                  onClick={handleVoiceCall}
+                  className="button-primary inline-block"
+                >
                   Call Now
-                </a>
+                </button>
               </div>
             </div>
           </div>
 
           <div className="card">
             <div className="flex items-start space-x-4">
-              <Phone className="h-8 w-8 text-primary flex-shrink-0" />
+              <MessageSquare className="h-8 w-8 text-primary flex-shrink-0" />
               <div>
                 <h3 className="text-xl font-semibold mb-2">SMS Emergency Contacts</h3>
                 <p className="text-gray-600 mb-4">
                   Send emergency SMS to my contacts
                 </p>
-                <a href="tel:1800RESPECT" className="button-primary inline-block">
+                <button 
+                  onClick={handleSendSMS}
+                  className="button-primary inline-block"
+                >
                   Send SMS
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -98,14 +143,14 @@ export default function Home() {
         <div className="grid md:grid-cols-2 gap-8">
           <div className="card">
             <div className="flex items-start space-x-4">
-              <Phone className="h-8 w-8 text-primary flex-shrink-0" />
+              <MessageCircle className="h-8 w-8 text-primary flex-shrink-0" />
               <div>
-                <h3 className="text-xl font-semibold mb-2">24/7 Helpline</h3>
+                <h3 className="text-xl font-semibold mb-2">Anonymous chat</h3>
                 <p className="text-gray-600 mb-4">
-                  Annonymous chat and interaction
+                  Anonymous chat and interaction
                 </p>
                 <a href="tel:1800RESPECT" className="button-primary inline-block">
-                  Call Now
+                  Chat
                 </a>
               </div>
             </div>
@@ -113,14 +158,14 @@ export default function Home() {
 
           <div className="card">
             <div className="flex items-start space-x-4">
-              <Phone className="h-8 w-8 text-primary flex-shrink-0" />
+              <Calendar className="h-8 w-8 text-primary flex-shrink-0" />
               <div>
-                <h3 className="text-xl font-semibold mb-2">SMS Emergency Contacts</h3>
+                <h3 className="text-xl font-semibold mb-2">Get specialist support</h3>
                 <p className="text-gray-600 mb-4">
-                  Learn about our offerings
+                  Book a one-on-one session with seasoned experts
                 </p>
-                <a href="tel:1800RESPECT" className="button-primary inline-block">
-                  Learn More
+                <a href="/contact-specialist" className="button-primary inline-block">
+                  Book
                 </a>
               </div>
             </div>

@@ -4,10 +4,33 @@ import "./globals.css";
 import Link from "next/link";
 import { PhoneCall, Home, Users } from "lucide-react";
 import { Toaster } from "react-hot-toast";
+import { useToast } from "@/hooks/use-toast";
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
+  const { toast } = useToast();
+
+  const handleEmergencyCall = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    try {
+      const response = await fetch("/api/trigger-voice-call", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        toast("Failed to initiate emergency call", "error");
+      }
+
+      toast("Emergency voice calls initiated. Help is on the way!", "success");
+    } catch (error) {
+      toast("Failed to make emergency calls", "error");
+    }
+  };
+
   return (
     <html lang="en">
       <body>
@@ -37,9 +60,9 @@ export default function RootLayout({
           {children}
         </main>
 
-        <Link href="/emergency-contacts" className="sos-button">
+        <button onClick={handleEmergencyCall} className="sos-button">
           <PhoneCall className="h-8 w-8" />
-        </Link>
+        </button>
       </div>
       </body>
     </html>
