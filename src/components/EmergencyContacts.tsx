@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Plus, Trash2, Phone } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -13,11 +14,16 @@ interface Contact {
 
 const EmergencyContacts = () => {
   const { toast } = useToast();
+  const [contacts, setContacts] = useState<Contact[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [contacts, setContacts] = useState<Contact[]>(() => {
+  useEffect(() => {
     const saved = localStorage.getItem("emergencyContacts");
-    return saved ? JSON.parse(saved) : [];
-  });
+    if (saved) {
+      setContacts(JSON.parse(saved));
+    }
+    setIsLoading(false);
+  }, []);
 
   const [newContact, setNewContact] = useState({
     name: "",
@@ -26,8 +32,10 @@ const EmergencyContacts = () => {
   });
 
   const saveContacts = (updatedContacts: Contact[]) => {
-    localStorage.setItem("emergencyContacts", JSON.stringify(updatedContacts));
-    setContacts(updatedContacts);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("emergencyContacts", JSON.stringify(updatedContacts));
+      setContacts(updatedContacts);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
