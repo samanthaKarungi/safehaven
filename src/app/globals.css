@@ -2,20 +2,71 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --radius: 0.75rem;
+  }
+
+  body {
+    @apply bg-surface text-gray-900 antialiased;
   }
 }
 
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.safe-exit-button {
+  @apply fixed top-4 right-4 z-50 bg-danger hover:bg-danger-hover text-white px-4 py-2 rounded-md 
+         transition-all duration-200 shadow-lg hover:shadow-xl;
+}
+
+.section-fade {
+  @apply opacity-0 animate-fadeIn;
+}
+
+.hero-slide {
+  @apply translate-x-[-100%] animate-slideIn;
+}
+
+.nav-link {
+  @apply relative text-gray-700 hover:text-primary transition-colors duration-200
+         after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 
+         after:bg-primary after:transform after:scale-x-0 
+         after:transition-transform after:duration-200
+         hover:after:scale-x-100;
+}
+
+.card {
+  @apply bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-200
+         p-6 border border-gray-100;
+}
+
+.input-field {
+  @apply w-full px-4 py-2 rounded-md border border-gray-200 focus:border-primary
+         focus:ring-2 focus:ring-primary/20 outline-none transition-all duration-200;
+}
+
+.button-primary {
+  @apply bg-primary hover:bg-primary-hover text-white font-medium px-6 py-3 rounded-md
+         transition-all duration-200 shadow-md hover:shadow-lg
+         active:transform active:scale-95;
+}
+
+.button-secondary {
+  @apply bg-secondary hover:bg-secondary-hover text-gray-800 font-medium px-6 py-3 rounded-md
+         transition-all duration-200 shadow-sm hover:shadow-md
+         active:transform active:scale-95;
+}
+
+.sos-button {
+  @apply fixed bottom-8 right-8 bg-danger hover:bg-danger-hover text-white font-bold
+         w-16 h-16 rounded-full shadow-lg hover:shadow-xl
+         flex items-center justify-center
+         transition-all duration-200
+         active:transform active:scale-90;
 }
