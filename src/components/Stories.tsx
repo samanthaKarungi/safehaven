@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { MessageSquare, Heart, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -12,26 +13,40 @@ interface Story {
   isLiked?: boolean;
 }
 
+const defaultStories: Story[] = [
+  {
+    id: "1",
+    content: "Through this community, I found the strength to start my healing journey. Remember, you are not alone.",
+    date: "2024-02-20",
+    likes: 5,
+  },
+  {
+    id: "2",
+    content: "Taking the first step to seek help was the hardest, but it was also the most important decision I've made.",
+    date: "2024-02-19",
+    likes: 3,
+  }
+];
+
 const Stories = () => {
   const { toast } = useToast();
   const [newStory, setNewStory] = useState("");
-  const [stories, setStories] = useState<Story[]>(() => {
+  const [stories, setStories] = useState<Story[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
     const saved = localStorage.getItem("stories");
-    return saved ? JSON.parse(saved) : [
-      {
-        id: "1",
-        content: "Through this community, I found the strength to start my healing journey. Remember, you are not alone.",
-        date: "2024-02-20",
-        likes: 5,
-      },
-      {
-        id: "2",
-        content: "Taking the first step to seek help was the hardest, but it was also the most important decision I've made.",
-        date: "2024-02-19",
-        likes: 3,
-      }
-    ];
-  });
+    setStories(saved ? JSON.parse(saved) : defaultStories);
+    setIsLoading(false);
+  }, []);
+
+  const saveStories = (updatedStories: Story[]) => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("stories", JSON.stringify(updatedStories));
+      setStories(updatedStories);
+    }
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!newStory.trim()) {
@@ -45,8 +60,7 @@ const Stories = () => {
       likes: 0,
     };
     const updatedStories = [story, ...stories];
-    setStories(updatedStories);
-    localStorage.setItem("stories", JSON.stringify(updatedStories));
+    saveStories(updatedStories);
     setNewStory("");
     toast("Story shared! Thank you for sharing your story", "success");
   };
@@ -61,8 +75,7 @@ const Stories = () => {
       }
       return story;
     });
-    setStories(updatedStories);
-    localStorage.setItem("stories", JSON.stringify(updatedStories));
+    saveStories(updatedStories);
   };
   return (
     <div className="max-w-3xl mx-auto space-y-8">
