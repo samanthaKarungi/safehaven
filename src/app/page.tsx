@@ -149,7 +149,7 @@ export default function Home() {
                 <p className="text-gray-600 mb-4">
                   Anonymous chat and interaction
                 </p>
-                <a href="tel:1800RESPECT" className="button-primary inline-block">
+                <a href="/stories" className="button-primary inline-block">
                   Chat
                 </a>
               </div>
